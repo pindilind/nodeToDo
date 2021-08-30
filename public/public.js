@@ -1,4 +1,5 @@
 
+
 let bodyDiv = document.getElementById('body') //hämtar bodydiven
 
 let saveToDoBtn = document.createElement('button') //skapar knapp
@@ -8,13 +9,15 @@ saveToDoText.innerText = "Spara" //skriver text på knapp
 bodyDiv.appendChild(saveToDoBtn)
 saveToDoBtn.appendChild(saveToDoText)
 
-saveToDoBtn.onclick = async function() { //onclick funktion
+saveToDoBtn.onclick = async function () { //onclick funktion
 
     let taskInput = document.getElementById('someValue').value
     console.log(taskInput)
-    
-    const status = await makeRequest("http://localhost:3000/api", "POST", {todoItem: taskInput})
-    console.log(status)    
+
+    const status = await makeRequest("http://localhost:3000/api", "POST", {
+        todoItem: taskInput
+    })
+    console.log(status)
 
 }
 
@@ -27,59 +30,67 @@ getToDoText.innerText = 'Hämtar ToDo' //skriver text på knapp
 bodyDiv.appendChild(getToDoBtn)
 getToDoBtn.appendChild(getToDoText)
 
-    getToDoBtn.onclick = async function() { //onclick funktion 
-
-        const displayToDo = await makeRequest("http://localhost:3000/api", "GET")
-        console.log(displayToDo)
-
-        for (let i = 0; i < displayToDo.length; i++) {
-            const element = document.createElement('li')
-            element.innerText = displayToDo[i].todoItem
-            console.log(displayToDo[i])
-            
-            document.getElementById('toDoDiv').appendChild(element)
-            /* toDoText.innerText = element. */
-        } 
-
-        /* displayToDo.forEach(displayToDo => {
-            const toDoText = document.getElementById('toDoDiv')
-            toDoText.innerText = displayToDo.todoItem
-            
-            console.log(displayToDo.todoItem)
-        
-        }); */
-    }
+async function getTodo() { //onclick funktion 
+    const displayToDo = await makeRequest("http://localhost:3000/api", "GET")
+    console.log(displayToDo)
     
+    document.getElementById('toDoDiv').innerHTML = ""
 
- /*    function renderAndCollect() {
-    const toDoText = document.getElementsByTagName('h2')[0]
-    toDoText.innerText = displayToDo.todoItem
-} */
+    for (let i = 0; i < displayToDo.length; i++) {
+        const element = document.createElement('li')
+        element.innerText = displayToDo[i].todoItem
+        console.log(displayToDo[i])
 
-//---------------INPUT--------------------------------
+        element.onclick = function() {
+            let id = displayToDo[i].id
 
-/* let input = document.createElement('input')
-let placeHolder = document.createElement('placeholder')
-placeHolder.innerText = "Vad ska du göra idag?"
+            deleteTodo(id)
+        }
 
-bodyDiv.appendChild(input)
-input.appendChild(placeHolder)
+        document.getElementById('toDoDiv').appendChild(element)
+        /* toDoText.innerText = element. */
+    }
+}
 
-function input() {
+getToDoBtn.onclick = getTodo
 
-} */
+
+let deleteBtn = document.createElement("button")
+let btnText = document.createElement("h3")
+btnText.innerText = "Ta bort"
+
+bodyDiv.appendChild(deleteBtn)
+deleteBtn.appendChild(btnText)
+
+
+async function deleteTodo(id) { //onclick funktion 
+  
+    if(id != null) {
+        console.log(id)
+    }
+
+    const status = await makeRequest("http://localhost:3000/api", "DELETE", {id})
+    console.log(status)
+
+    getTodo()
+}
+
+deleteBtn.onclick = deleteTodo
+
 
 async function makeRequest(url, method, body) {
     try {
         const response = await fetch(url, {
-            headers: {"Content-Type": "application/json"},
+            headers: {
+                "Content-Type": "application/json"
+            },
             method,
             body: JSON.stringify(body)
         })
         console.log(response)
         const result = await response.json()
         return result
-    }catch(err) {
+    } catch (err) {
         console.error(err)
     }
 }
