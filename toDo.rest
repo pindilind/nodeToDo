@@ -1,1 +1,19 @@
-GET http://localhost:3000
+GET http://localhost:3000/api
+
+###
+
+DELETE http://localhost:3000/api
+Content-Type: application/json
+
+{
+    "id": 3
+}
+
+###
+
+PUT http://localhost:3000/api/1
+Content-Type: application/json
+
+{
+    "newText": "städa"
+}
